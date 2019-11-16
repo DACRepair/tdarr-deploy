@@ -1,0 +1,26 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/mongo:/data/db
+    restart: unless-stopped
+
+  tdarr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8265:8265
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/Tdarr
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./data/tdarr:/root/Documents/Tdarr
+      - /mnt/media:/root/Media
+      - /cache:/cache
+    depends_on:
+      - mongo
+    restart: unless-stopped
